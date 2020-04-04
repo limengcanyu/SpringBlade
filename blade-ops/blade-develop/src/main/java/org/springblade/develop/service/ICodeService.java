@@ -23,8 +23,15 @@ import org.springblade.develop.entity.Code;
  * 服务类
  *
  * @author Chill
- * @since 2018-12-24
  */
 public interface ICodeService extends IService<Code> {
+
+	/**
+	 * 提交
+	 *
+	 * @param code
+	 * @return
+	 */
+	boolean submit(Code code);
 
 }

@@ -1,7 +1,15 @@
  <p align="center">
+      <img src="https://img.shields.io/badge/Release-V2.6.2-green.svg" alt="Downloads">
+      <img src="https://img.shields.io/badge/JDK-1.8+-green.svg" alt="Build Status">
   <img src="https://img.shields.io/badge/license-Apache%202-blue.svg" alt="Build Status">
-   <img src="https://img.shields.io/badge/Spring%20Cloud-Greenwich.SR1-blue.svg" alt="Coverage Status">
-   <img src="https://img.shields.io/badge/Spring%20Boot-2.1.5.RELEASE-blue.svg" alt="Downloads">
+   <img src="https://img.shields.io/badge/Spring%20Cloud-Hoxton.SR2-blue.svg" alt="Coverage Status">
+   <img src="https://img.shields.io/badge/Spring%20Boot-2.2.5.RELEASE-blue.svg" alt="Downloads">
+   <a target="_blank" href="https://bladex.vip">
+   <img src="https://img.shields.io/badge/Author-Small%20Chill-ff69b4.svg" alt="Downloads">
+ </a>
+ <a target="_blank" href="https://bladex.vip">
+   <img src="https://img.shields.io/badge/Copyright%20-@BladeX-%23ff3f59.svg" alt="Downloads">
+ </a>
  </p>  
 
 ## SpringBlade微服务开发平台
@@ -29,6 +37,9 @@ SpringBlade
 ├── blade-ops -- 运维中心
 ├    ├── blade-admin -- spring-cloud后台管理
 ├    ├── blade-develop -- 代码生成
+├    ├── blade-resource -- 资源管理
+├    ├── blade-seata-order -- seata分布式事务demo
+├    ├── blade-seata-storage -- seata分布式事务demo
 ├── blade-service -- 业务模块
 ├    ├── blade-desk -- 工作台模块 
 ├    ├── blade-log -- 日志模块 
@@ -45,11 +56,18 @@ SpringBlade
 * 官网地址：[https://bladex.vip](https://bladex.vip)
 * 问答社区：[https://sns.bladex.vip](https://sns.bladex.vip)
 * 会员计划：[SpringBlade会员计划](https://gitee.com/smallc/SpringBlade/wikis/SpringBlade会员计划)
-* 交流群：`477853168`
+* 交流一群：`477853168`(满)
+* 交流二群：`751253339`(满)
+* 交流三群：`784729540`
 
 ## 在线演示
-* Sword演示地址：[https://sword.bladex.vip](https://sword.bladex.vip)
-* Saber演示地址：[https://saber.bladex.vip](https://saber.bladex.vip)
+* Saber-基于Vue：[https://saber.bladex.vip](https://saber.bladex.vip)
+* Sword-基于React：[https://sword.bladex.vip](https://sword.bladex.vip)
+* Archer-全能代码生成系统：[https://archer.bladex.vip](https://archer.bladex.vip)
+
+## 技术文档
+* [SpringBlade开发手册一览](https://gitee.com/smallc/SpringBlade/wikis/SpringBlade开发手册)
+* [常见问题集锦](https://sns.bladex.vip/article-14966.html)
 
 ## 项目地址
 * 后端Gitee地址：[https://gitee.com/smallc/SpringBlade](https://gitee.com/smallc/SpringBlade)
@@ -59,14 +77,21 @@ SpringBlade
 * 前端框架Saber(基于Vue)：[https://gitee.com/smallc/Saber](https://gitee.com/smallc/Saber)
 * 核心框架项目地址：[https://github.com/chillzhuang/blade-tool](https://github.com/chillzhuang/blade-tool)
 
-## 技术文档
-* [SpringBlade开发手册](https://gitee.com/smallc/SpringBlade/wikis/SpringBlade开发手册)
+# 开源协议
+Apache Licence 2.0 （[英文原文](http://www.apache.org/licenses/LICENSE-2.0.html)）
+Apache Licence是著名的非盈利开源组织Apache采用的协议。该协议和BSD类似，同样鼓励代码共享和尊重原作者的著作权，同样允许代码修改，再发布（作为开源或商业软件）。
+需要满足的条件如下：
+* 需要给代码的用户一份Apache Licence
+* 如果你修改了代码，需要在被修改的文件中说明。
+* 在延伸的代码中（修改和有源代码衍生的代码中）需要带有原来代码中的协议，商标，专利声明和其他原来作者规定需要包含的说明。
+* 如果再发布的产品中包含一个Notice文件，则在Notice文件中需要带有Apache Licence。你可以在Notice中增加自己的许可，但不可以表现为对Apache Licence构成更改。
+Apache Licence也是对商业应用友好的许可。使用者也可以在需要的时候修改代码来满足需要并作为开源或商业产品发布/销售。
 
 ## 用户权益
 * 允许免费用于学习、毕设、公司项目、私活等。
-* 代码文件需保留相关license信息。
-* 禁止直接将本项目挂淘宝等商业平台出售。
-* 非界面代码50%以上相似度的二次开源，二次开源需先联系作者。
+* 对未经过授权和不遵循 Apache 2.0 协议二次开源或者商业化我们将追究到底。
+* 参考请注明：参考自 SpringBlade：https://gitee.com/smallc/SpringBlade 。另请遵循 Apache 2.0 协议。
+* `注意`：若禁止条款被发现有权追讨 **19999** 的授权费。
 
 # 界面
 

@@ -29,7 +29,8 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @author Chill
  */
 @FeignClient(
-	value = AppConstant.APPLICATION_USER_NAME
+	value = AppConstant.APPLICATION_USER_NAME,
+	fallback = IUserClientFallback.class
 )
 public interface IUserClient {
 
@@ -38,12 +39,21 @@ public interface IUserClient {
 	/**
 	 * 获取用户信息
 	 *
-	 * @param tenantCode     租户编号
-	 * @param account  账号
-	 * @param password 密码
+	 * @param userId 用户id
+	 * @return
+	 */
+	@GetMapping(API_PREFIX + "/user-info-by-id")
+	R<UserInfo> userInfo(@RequestParam("userId") Long userId);
+
+	/**
+	 * 获取用户信息
+	 *
+	 * @param tenantId 租户ID
+	 * @param account    账号
+	 * @param password   密码
 	 * @return
 	 */
 	@GetMapping(API_PREFIX + "/user-info")
-	R<UserInfo> userInfo(@RequestParam("tenantCode") String tenantCode, @RequestParam("account") String account, @RequestParam("password") String password);
+	R<UserInfo> userInfo(@RequestParam("tenantId") String tenantId, @RequestParam("account") String account, @RequestParam("password") String password);
 
 }

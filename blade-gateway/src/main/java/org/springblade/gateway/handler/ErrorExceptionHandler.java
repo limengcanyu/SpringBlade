@@ -15,17 +15,16 @@
  */
 package org.springblade.gateway.handler;
 
+import org.springblade.gateway.provider.ResponseProvider;
 import org.springframework.boot.autoconfigure.web.ErrorProperties;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.DefaultErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.cloud.gateway.support.NotFoundException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.server.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -53,7 +52,7 @@ public class ErrorExceptionHandler extends DefaultErrorWebExceptionHandler {
 		if (error instanceof ResponseStatusException) {
 			code = ((ResponseStatusException) error).getStatus().value();
 		}
-		return response(code, this.buildMessage(request, error));
+		return ResponseProvider.response(code, this.buildMessage(request, error));
 	}
 
 	/**
@@ -70,11 +69,11 @@ public class ErrorExceptionHandler extends DefaultErrorWebExceptionHandler {
 	 * 根据code获取对应的HttpStatus
 	 *
 	 * @param errorAttributes
+	 * @return
 	 */
 	@Override
-	protected HttpStatus getHttpStatus(Map<String, Object> errorAttributes) {
-		int statusCode = (int) errorAttributes.get("code");
-		return HttpStatus.valueOf(statusCode);
+	protected int getHttpStatus(Map<String, Object> errorAttributes) {
+		return (int) errorAttributes.get("code");
 	}
 
 	/**
@@ -95,21 +94,6 @@ public class ErrorExceptionHandler extends DefaultErrorWebExceptionHandler {
 			message.append(ex.getMessage());
 		}
 		return message.toString();
-	}
-
-	/**
-	 * 构建返回的JSON数据格式
-	 *
-	 * @param status       状态码
-	 * @param errorMessage 异常信息
-	 * @return
-	 */
-	public static Map<String, Object> response(int status, String errorMessage) {
-		Map<String, Object> map = new HashMap<>(16);
-		map.put("code", status);
-		map.put("message", errorMessage);
-		map.put("data", null);
-		return map;
 	}
 
 }

@@ -15,25 +15,30 @@
  */
 package org.springblade.auth.controller;
 
+import com.wf.captcha.SpecCaptcha;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.AllArgsConstructor;
-import org.springblade.core.launch.constant.TokenConstant;
+import org.springblade.auth.granter.ITokenGranter;
+import org.springblade.auth.granter.TokenGranterBuilder;
+import org.springblade.auth.granter.TokenParameter;
+import org.springblade.auth.utils.TokenUtil;
+import org.springblade.common.cache.CacheNames;
 import org.springblade.core.secure.AuthInfo;
-import org.springblade.core.secure.utils.SecureUtil;
 import org.springblade.core.tool.api.R;
-import org.springblade.core.tool.utils.DigestUtil;
+import org.springblade.core.tool.support.Kv;
 import org.springblade.core.tool.utils.Func;
-import org.springblade.system.user.entity.User;
+import org.springblade.core.tool.utils.RedisUtil;
+import org.springblade.core.tool.utils.WebUtil;
 import org.springblade.system.user.entity.UserInfo;
-import org.springblade.system.user.feign.IUserClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 认证模块
@@ -45,50 +50,45 @@ import java.util.Map;
 @Api(value = "用户授权认证", tags = "授权接口")
 public class AuthController {
 
-	private IUserClient client;
+	private RedisUtil redisUtil;
 
 	@PostMapping("token")
-	@ApiOperation(value = "获取认证token", notes = "传入租户编号:tenantCode,账号:account,密码:password")
-	public R<AuthInfo> token(@ApiParam(value = "租户编号", required = true) @RequestParam(defaultValue = "000000", required = false) String tenantCode,
-							 @ApiParam(value = "账号", required = true) @RequestParam String account,
-							 @ApiParam(value = "密码", required = true) @RequestParam String password) {
+	@ApiOperation(value = "获取认证token", notes = "传入租户ID:tenantId,账号:account,密码:password")
+	public R<AuthInfo> token(@ApiParam(value = "授权类型", required = true) @RequestParam(defaultValue = "password", required = false) String grantType,
+							 @ApiParam(value = "刷新令牌") @RequestParam(required = false) String refreshToken,
+							 @ApiParam(value = "租户ID", required = true) @RequestParam(defaultValue = "000000", required = false) String tenantId,
+							 @ApiParam(value = "账号") @RequestParam(required = false) String account,
+							 @ApiParam(value = "密码") @RequestParam(required = false) String password) {
 
-		if (Func.hasEmpty(account, password)) {
-			return R.fail("接口调用不合法");
+		String userType = Func.toStr(WebUtil.getRequest().getHeader(TokenUtil.USER_TYPE_HEADER_KEY), TokenUtil.DEFAULT_USER_TYPE);
+
+		TokenParameter tokenParameter = new TokenParameter();
+		tokenParameter.getArgs().set("tenantId", tenantId)
+			.set("account", account)
+			.set("password", password)
+			.set("grantType", grantType)
+			.set("refreshToken", refreshToken)
+			.set("userType", userType);
+
+		ITokenGranter granter = TokenGranterBuilder.getGranter(grantType);
+		UserInfo userInfo = granter.grant(tokenParameter);
+
+		if (userInfo == null || userInfo.getUser() == null || userInfo.getUser().getId() == null) {
+			return R.fail(TokenUtil.USER_NOT_FOUND);
 		}
 
-		R<UserInfo> res = client.userInfo(tenantCode, account, DigestUtil.encrypt(password));
+		return R.data(TokenUtil.createAuthInfo(userInfo));
+	}
 
-		User user = res.getData().getUser();
-
-		//验证用户
-		if (Func.isEmpty(user.getId())) {
-			return R.fail("用户名或密码不正确");
-		}
-
-		//设置jwt参数
-		Map<String, String> param = new HashMap<>(16);
-		param.put(TokenConstant.USER_ID, Func.toStr(user.getId()));
-		param.put(TokenConstant.ROLE_ID, user.getRoleId());
-		param.put(TokenConstant.TENANT_CODE, user.getTenantCode());
-		param.put(TokenConstant.ACCOUNT, user.getAccount());
-		param.put(TokenConstant.USER_NAME, user.getRealName());
-		param.put(TokenConstant.ROLE_NAME, Func.join(res.getData().getRoles()));
-
-		//拼装accessToken
-		String accessToken = SecureUtil.createJWT(param, "audience", "issuser", true);
-
-		//返回accessToken
-		AuthInfo authInfo = new AuthInfo();
-		authInfo.setAccount(user.getAccount());
-		authInfo.setUserName(user.getRealName());
-		authInfo.setAuthority(Func.join(res.getData().getRoles()));
-		authInfo.setAccessToken(accessToken);
-		authInfo.setTokenType(TokenConstant.BEARER);
-		//设置token过期时间
-		authInfo.setExpiresIn(SecureUtil.getExpire());
-		return R.data(authInfo);
-
+	@GetMapping("/captcha")
+	public R<Kv> captcha() {
+		SpecCaptcha specCaptcha = new SpecCaptcha(130, 48, 5);
+		String verCode = specCaptcha.text().toLowerCase();
+		String key = UUID.randomUUID().toString();
+		// 存入redis并设置过期时间为30分钟
+		redisUtil.set(CacheNames.CAPTCHA_KEY + key, verCode, 30L, TimeUnit.MINUTES);
+		// 将key和base64返回给前端
+		return R.data(Kv.init().set("key", key).set("image", specCaptcha.toBase64()));
 	}
 
 }
