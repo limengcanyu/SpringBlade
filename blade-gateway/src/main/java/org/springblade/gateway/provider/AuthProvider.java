@@ -38,11 +38,12 @@ public class AuthProvider {
 		defaultSkipUrl.add("/captcha/**");
 		defaultSkipUrl.add("/actuator/health/**");
 		defaultSkipUrl.add("/v2/api-docs/**");
-		defaultSkipUrl.add("/v2/api-docs-ext/**");
 		defaultSkipUrl.add("/auth/**");
+		defaultSkipUrl.add("/oauth/**");
 		defaultSkipUrl.add("/log/**");
 		defaultSkipUrl.add("/menu/routes");
 		defaultSkipUrl.add("/menu/auth-routes");
+		defaultSkipUrl.add("/tenant/info");
 		defaultSkipUrl.add("/order/create/**");
 		defaultSkipUrl.add("/storage/deduct/**");
 		defaultSkipUrl.add("/error/**");
